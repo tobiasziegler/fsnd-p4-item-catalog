@@ -1,21 +1,21 @@
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
 
 @app.route('/')
 @app.route('/catalog')
 def showCatalog():
-    return 'This page will show all categories and the latest added items'
+    return render_template('catalog.html')
 
 
 @app.route('/catalog/categories/<category>')
 def showCategory(category):
-    return 'This page will show all items for the specified category'
+    return render_template('showCategory.html', category=category)
 
 
 @app.route('/catalog/categories/<category>/items/<item>')
 def showItem(category, item):
-    return 'This page will show specific information about the specified item'
+    return render_template('showItem.html', category=category, item=item)
 
 
 if __name__ == "__main__":

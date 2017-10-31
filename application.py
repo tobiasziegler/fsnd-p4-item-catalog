@@ -1,7 +1,7 @@
 from models import Base, Category, Item
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from flask import Flask, render_template, url_for
 
 engine = create_engine('postgresql:///catalog')
@@ -15,7 +15,7 @@ app = Flask(__name__)
 @app.route('/catalog')
 def showCatalog():
     categories = session.query(Category).all()
-    items = session.query(Item).order_by('id desc').limit(10).all()
+    items = session.query(Item).order_by(desc(Item.id)).limit(10).all()
     return render_template('catalog.html', categories=categories, items=items)
 
 

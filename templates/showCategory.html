@@ -3,6 +3,7 @@
 {% block content %}
 <div>
     <h2>Categories</h2>
+    {% if categories %}
     <ul>
         {% for c in categories %}
         <li>
@@ -10,9 +11,13 @@
         </li>
         {% endfor %}
     </ul>
+    {% else %}
+    <p>There are no categories available</p>
+    {% endif %}
 </div>
 <div>
     <h2>{{ category.name }} Items</h2>
+    {% if items %}
     <ul>
         {% for i in items %}
         <li>
@@ -20,5 +25,8 @@
         </li>
         {% endfor %}
     </ul>
+    {% else %}
+    <p>There are no items in this category</p>
+    {% endif %}
 </div>
 {% endblock %}

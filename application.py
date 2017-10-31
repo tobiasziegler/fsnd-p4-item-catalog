@@ -1,4 +1,4 @@
-from models import Base, Category, Item
+from models import Base, User, Category, Item
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine, desc

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import Base, Category, Item
+from models import Base, User, Category, Item
 
 engine = create_engine('postgresql:///catalog')
 
@@ -14,39 +14,44 @@ Base.metadata.create_all(engine)
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-category1 = Category(slug='soccer', name='Soccer')
+user1 = User(name='David Mallard', email='correspondence@davidmallard.id.au',
+             picture='')
+session.add(user1)
+session.commit()
+
+category1 = Category(slug='soccer', name='Soccer', user=user1)
 session.add(category1)
 session.commit()
 
-category2 = Category(slug='basketball', name='Basketball')
+category2 = Category(slug='basketball', name='Basketball', user=user1)
 session.add(category2)
 session.commit()
 
-category3 = Category(slug='baseball', name='Baseball')
+category3 = Category(slug='baseball', name='Baseball', user=user1)
 session.add(category3)
 session.commit()
 
-category4 = Category(slug='frisbee', name='Frisbee')
+category4 = Category(slug='frisbee', name='Frisbee', user=user1)
 session.add(category4)
 session.commit()
 
-category5 = Category(slug='snowboarding', name='Snowboarding')
+category5 = Category(slug='snowboarding', name='Snowboarding', user=user1)
 session.add(category5)
 session.commit()
 
-category6 = Category(slug='rock-climbing', name='Rock Climbing')
+category6 = Category(slug='rock-climbing', name='Rock Climbing', user=user1)
 session.add(category6)
 session.commit()
 
-category7 = Category(slug='foosball', name='Foosball')
+category7 = Category(slug='foosball', name='Foosball', user=user1)
 session.add(category7)
 session.commit()
 
-category8 = Category(slug='skating', name='Skating')
+category8 = Category(slug='skating', name='Skating', user=user1)
 session.add(category8)
 session.commit()
 
-category9 = Category(slug='hockey', name='Hockey')
+category9 = Category(slug='hockey', name='Hockey', user=user1)
 session.add(category9)
 session.commit()
 
@@ -63,7 +68,8 @@ item01 = Item(slug='glove', name='Glove',
               (LH or LHT) is worn on the right hand, allowing the player to
               throw the ball with the left hand.
               ''',
-              category=category3)
+              category=category3,
+              user=user1)
 session.add(item01)
 session.commit()
 
@@ -76,7 +82,8 @@ item02 = Item(slug='climbing-rope', name='Climbing Rope',
               that protects the core and gives the rope desirable handling
               characteristics.
               ''',
-              category=category6)
+              category=category6,
+              user=user1)
 session.add(item02)
 session.commit()
 
@@ -95,7 +102,8 @@ item03 = Item(slug='skates', name='Skates',
               in many sports, including figure skating, ice hockey, bandy,
               speed skating and tour skating.
               ''',
-              category=category8)
+              category=category8,
+              user=user1)
 session.add(item03)
 session.commit()
 
@@ -118,7 +126,8 @@ item04 = Item(slug='foosball-table', name='Foosball Table',
               speed of shots a great deal, as well as the "grip" between the
               man and the ball and the ball and the playing surface.
               ''',
-              category=category7)
+              category=category7,
+              user=user1)
 session.add(item04)
 session.commit()
 
@@ -135,7 +144,8 @@ item05 = Item(slug='soccer-cleats', name='Soccer Cleats',
               raised and the potentially damaging metal studs impacting on the
               legs or feet of the opponent.
               ''',
-              category=category1)
+              category=category1,
+              user=user1)
 session.add(item05)
 session.commit()
 
@@ -158,7 +168,8 @@ item06 = Item(slug='jersey', name='Jersey',
               armband around the left sleeve to identify him as the captain to
               the referee and supporters.
               ''',
-              category=category1)
+              category=category1,
+              user=user1)
 session.add(item06)
 session.commit()
 
@@ -177,7 +188,8 @@ item07 = Item(slug='bat', name='Bat',
               a wider piece that keeps the bat from slipping from a batter's
               hands.
               ''',
-              category=category3)
+              category=category3,
+              user=user1)
 session.add(item07)
 session.commit()
 
@@ -191,7 +203,8 @@ item08 = Item(slug='frisbee', name='Frisbee',
               airfoil in cross-section, allows it to fly by generating lift as
               it moves through the air while spinning.
               ''',
-              category=category4)
+              category=category4,
+              user=user1)
 session.add(item08)
 session.commit()
 
@@ -205,7 +218,8 @@ item09 = Item(slug='shinguards', name='Shinguards',
               rules/laws of the sport or worn voluntarily by the participants
               for protective measures.
               ''',
-              category=category1)
+              category=category1,
+              user=user1)
 session.add(item09)
 session.commit()
 
@@ -219,7 +233,8 @@ item10 = Item(slug='two-shinguards', name='Two Shinguards',
               shin guard with protection and ankle support. Goalkeepers can
               wear a light shin guard with minimal protection.
               ''',
-              category=category1)
+              category=category1,
+              user=user1)
 session.add(item10)
 session.commit()
 
@@ -233,7 +248,8 @@ item11 = Item(slug='snowboard', name='Snowboard',
               board), whereas in snowboarding, users stand with feet transverse
               (more or less) to the longitude of the board.
               ''',
-              category=category5)
+              category=category5,
+              user=user1)
 session.add(item11)
 session.commit()
 
@@ -249,7 +265,8 @@ item12 = Item(slug='goggles', name='Goggles',
               Many types of goggles are available as prescription goggles for
               those with vision problems.
               ''',
-              category=category5)
+              category=category5,
+              user=user1)
 session.add(item12)
 session.commit()
 
@@ -273,6 +290,7 @@ item13 = Item(slug='stick', name='Stick',
               making it ideal for stopping the ball. This head is most commonly
               used by 'defenders'.
               ''',
-              category=category9)
+              category=category9,
+              user=user1)
 session.add(item13)
 session.commit()

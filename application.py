@@ -1,6 +1,7 @@
 from models import Base, User, Category, Item
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import create_engine, desc, asc
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import session as login_session
@@ -107,6 +108,12 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    # See if user exists. If it doesn't, make a new one.
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+        login_session['user_id'] = user_id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -118,6 +125,30 @@ def gconnect():
     flash("You are now logged in as %s" % login_session['username'])
     print("done!")
     return output
+
+
+# User Helper Functions
+
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except NoResultFound:
+        return None
 
 
 @app.route('/gdisconnect')

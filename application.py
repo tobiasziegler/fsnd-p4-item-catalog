@@ -160,7 +160,7 @@ def gdisconnect():
                                  401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print('In gdisconnect access token is %s', access_token)
+    print('In gdisconnect access token is %s' % access_token)
     print('User name is: ')
     print(login_session['username'])
     url = ('https://accounts.google.com/o/oauth2/revoke?token=%s'

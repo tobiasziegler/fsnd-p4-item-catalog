@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Create New Item - Item Catalog App{% endblock %}
+{% block content %}
+<h2>Create New Item - {{ category.name }}</h2>
+<form action="{{ url_for('newItem', category_slug=category.slug) }}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" maxlength="256" name="name">
+    <label for="description">Description:</label>
+    <textarea name="description"></textarea>
+    <button type="submit">Create</button>
+</form>
+{% endblock %}

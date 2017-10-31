@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Create New Category - Item Catalog App{% endblock %}
+{% block content %}
+<h2>Create a New Category</h2>
+<form action="{{ url_for('newCategory') }}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" maxlength="256" name="name">
+    <button type="submit">Create</button>
+</form>
+{% endblock %}

@@ -13,6 +13,7 @@ import httplib2
 import json
 from flask import make_response
 import requests
+from slugify import slugify
 
 CLIENT_ID = json.loads(
     open('google_client_secret.json', 'r').read())['web']['client_id']
@@ -203,11 +204,141 @@ def showCategory(category_slug):
                            category=category, items=items)
 
 
+@app.route('/catalog/categories/new',
+           methods=['GET', 'POST'])
+def newCategory():
+    if 'username' not in login_session:
+        return redirect('/login')
+    if request.method == 'POST':
+        name = request.form['name']
+        slug = slugify(name)
+        newCategory = Category(name=name,
+                               slug=slug,
+                               user_id=login_session['user_id'])
+        session.add(newCategory)
+        flash('New Category %s Successfully Created' % newCategory.name)
+        session.commit()
+        return redirect(url_for('showCatalog'))
+    else:
+        return render_template('newCategory.html')
+
+
+@app.route('/catalog/categories/<category_slug>/edit',
+           methods=['GET', 'POST'])
+def editCategory(category_slug):
+    if 'username' not in login_session:
+        return redirect('/login')
+    editedCategory = session.query(Category).filter_by(
+                        slug=category_slug).first()
+    if request.method == 'POST':
+        if request.form['name']:
+            name = request.form['name']
+            slug = slugify(name)
+            editedCategory.name = name
+            editedCategory.slug = slug
+            session.add(editedCategory)
+            session.commit()
+            flash('Category %s Successfully Edited' % editedCategory.name)
+            return redirect(url_for('showCatalog'))
+    else:
+        return render_template('editCategory.html', category=editedCategory)
+
+
+@app.route('/catalog/categories/<category_slug>/delete',
+           methods=['GET', 'POST'])
+def deleteCategory(category_slug):
+    if 'username' not in login_session:
+        return redirect('/login')
+    categoryToDelete = session.query(Category).filter_by(
+                       slug=category_slug).one()
+    if request.method == 'POST':
+        itemsToDelete = session.query(Item).filter_by(
+                        category=categoryToDelete).all()
+        for i in itemsToDelete:
+            session.delete(i)
+        session.delete(categoryToDelete)
+        flash('Category %s Successfully Deleted' % categoryToDelete.name)
+        session.commit()
+        return redirect(url_for('showCatalog'))
+    else:
+        return render_template('deleteCategory.html',
+                               category=categoryToDelete)
+
+
 @app.route('/catalog/categories/<category_slug>/items/<item_slug>')
 def showItem(category_slug, item_slug):
     category = session.query(Category).filter_by(slug=category_slug).first()
     item = session.query(Item).filter_by(slug=item_slug).first()
     return render_template('showItem.html', category=category, item=item)
+
+
+@app.route('/catalog/categories/<category_slug>/items/new',
+           methods=['GET', 'POST'])
+def newItem(category_slug):
+    if 'username' not in login_session:
+        return redirect('/login')
+    category = session.query(Category).filter_by(slug=category_slug).first()
+    if request.method == 'POST':
+        name = request.form['name']
+        slug = slugify(name)
+        description = request.form['description']
+        newItem = Item(name=name,
+                       slug=slug,
+                       description=description,
+                       user_id=login_session['user_id'],
+                       category_id=category.id)
+        session.add(newItem)
+        flash('New Item %s Successfully Created' % newItem.name)
+        session.commit()
+        return redirect(url_for('showCategory', category_slug=category_slug))
+    else:
+        return render_template('newItem.html', category=category)
+
+
+@app.route('/catalog/categories/<category_slug>/items/<item_slug>/edit',
+           methods=['GET', 'POST'])
+def editItem(category_slug, item_slug):
+    if 'username' not in login_session:
+        return redirect('/login')
+    category = session.query(Category).filter_by(
+                   slug=category_slug).first()
+    editedItem = session.query(Item).filter_by(
+                     slug=item_slug).first()
+    if request.method == 'POST':
+        if request.form['name']:
+            name = request.form['name']
+            slug = slugify(name)
+            description = request.form['description']
+            editedItem.name = name
+            editedItem.slug = slug
+            editedItem.description = description
+            session.add(editedItem)
+            session.commit()
+            flash('Item %s Successfully Edited' % editedItem.name)
+            return redirect(url_for('showCategory',
+                                    category_slug=category_slug))
+    else:
+        return render_template('editItem.html', category=category,
+                               item=editedItem)
+
+
+@app.route('/catalog/categories/<category_slug>/items/<item_slug>/delete',
+           methods=['GET', 'POST'])
+def deleteItem(category_slug, item_slug):
+    if 'username' not in login_session:
+        return redirect('/login')
+    category = session.query(Category).filter_by(
+                   slug=category_slug).first()
+    itemToDelete = session.query(Item).filter_by(
+                       slug=item_slug).one()
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        flash('Item %s Successfully Deleted' % itemToDelete.name)
+        session.commit()
+        return redirect(url_for('showCategory', category_slug=category_slug))
+    else:
+        return render_template('deleteItem.html', category=category,
+                               item=itemToDelete)
 
 
 if __name__ == "__main__":

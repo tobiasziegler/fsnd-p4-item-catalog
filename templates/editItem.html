@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Edit Item - Item Catalog App{% endblock %}
+{% block content %}
+<h2>Edit Item</h2>
+<form action="{{ url_for('editItem', category_slug=category.slug, item_slug=item.slug) }}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" maxlength="256" name="name" value="{{ item.name }}">
+    <label for="description">Description:</label>
+    <textarea name="description">{{ item.description }}</textarea>
+    <button type="submit">Update</button>
+</form>
+{% endblock %}

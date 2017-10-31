@@ -1,4 +1,13 @@
+from models import Base, Category, Item
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy import create_engine
 from flask import Flask, render_template
+
+engine = create_engine('postgresql:///catalog')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 app = Flask(__name__)
 
 

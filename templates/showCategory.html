@@ -1,5 +1,24 @@
 {% extends "base.html" %}
-{% block title %}{{ category }} - Item Catalog App{% endblock %}
+{% block title %}{{ category.name }} - Item Catalog App{% endblock %}
 {% block content %}
-    <p>This page will show all items for the {{ category }} category</p>
+<div>
+    <h2>Categories</h2>
+    <ul>
+        {% for c in categories %}
+        <li>
+            <a href="{{ url_for('showCategory', category_slug=c.slug) }}">{{ c.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<div>
+    <h2>{{ category.name }} Items</h2>
+    <ul>
+        {% for i in items %}
+        <li>
+            <a href="{{ url_for('showItem', category_slug=category.slug, item_slug=i.slug) }}">{{ i.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

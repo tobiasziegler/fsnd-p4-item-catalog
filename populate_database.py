@@ -15,7 +15,8 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 user1 = User(name='David Mallard', email='correspondence@davidmallard.id.au',
-             picture='')
+             picture=('https://lh4.googleusercontent.com/-Neastk5IaL8/'
+                      'AAAAAAAAAAI/AAAAAAAAAB8/FcUMblc8ocY/photo.jpg'))
 session.add(user1)
 session.commit()
 

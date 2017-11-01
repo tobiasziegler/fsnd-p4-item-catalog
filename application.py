@@ -15,10 +15,12 @@ from flask import make_response
 import requests
 from slugify import slugify
 
+# Load your Google OAuth client details - see README.md for setup
 CLIENT_ID = json.loads(
     open('google_client_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Item Catalog App"
 
+# Initialise the database connection and Flask app
 engine = create_engine('postgresql:///catalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
@@ -30,6 +32,7 @@ app = Flask(__name__)
 # Store it in the session for later validation.
 @app.route('/login')
 def showLogin():
+    '''Initiate the login process'''
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
@@ -38,6 +41,7 @@ def showLogin():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    '''Exchange credentials and establish user login via Google'''
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -132,6 +136,7 @@ def gconnect():
 # User Helper Functions
 
 def createUser(login_session):
+    '''Create a new user in the database and return its id'''
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
@@ -141,11 +146,13 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    '''Get all details of a user from the database via id'''
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    '''Check for a user record by email address and return id if it exists'''
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -155,6 +162,7 @@ def getUserID(email):
 
 @app.route('/logout')
 def showLogout():
+    '''Handle the user logout process through the appropriate provider'''
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             isDisconnected = gdisconnect()
@@ -168,6 +176,7 @@ def showLogout():
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    '''Revoke the user's Google access credentials'''
     access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
@@ -194,6 +203,7 @@ def gdisconnect():
 @app.route('/')
 @app.route('/catalog')
 def showCatalog():
+    '''Display the main catalog page'''
     categories = session.query(Category).all()
     items = session.query(Item).order_by(desc(Item.id)).limit(10).all()
     return render_template('catalog.html', categories=categories, items=items)
@@ -201,6 +211,7 @@ def showCatalog():
 
 @app.route('/catalog/categories/<category_slug>')
 def showCategory(category_slug):
+    '''Display the page for a specific category'''
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(slug=category_slug).first()
     items = session.query(Item).filter_by(category_id=category.id).all()
@@ -211,6 +222,7 @@ def showCategory(category_slug):
 @app.route('/catalog/categories/new',
            methods=['GET', 'POST'])
 def newCategory():
+    '''Create a new category - user must be logged in'''
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
@@ -230,6 +242,7 @@ def newCategory():
 @app.route('/catalog/categories/<category_slug>/edit',
            methods=['GET', 'POST'])
 def editCategory(category_slug):
+    '''Edit a category - user must be logged in'''
     if 'username' not in login_session:
         return redirect('/login')
     editedCategory = session.query(Category).filter_by(
@@ -251,6 +264,7 @@ def editCategory(category_slug):
 @app.route('/catalog/categories/<category_slug>/delete',
            methods=['GET', 'POST'])
 def deleteCategory(category_slug):
+    '''Update a category - user must be logged in'''
     if 'username' not in login_session:
         return redirect('/login')
     categoryToDelete = session.query(Category).filter_by(
@@ -271,6 +285,7 @@ def deleteCategory(category_slug):
 
 @app.route('/catalog/categories/<category_slug>/items/<item_slug>')
 def showItem(category_slug, item_slug):
+    '''Display te page for a specific item'''
     category = session.query(Category).filter_by(slug=category_slug).first()
     item = session.query(Item).filter_by(slug=item_slug).first()
     return render_template('showItem.html', category=category, item=item)
@@ -279,6 +294,7 @@ def showItem(category_slug, item_slug):
 @app.route('/catalog/categories/<category_slug>/items/new',
            methods=['GET', 'POST'])
 def newItem(category_slug):
+    '''Create a new item in a specified category - user must be logged in'''
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(slug=category_slug).first()
@@ -302,6 +318,7 @@ def newItem(category_slug):
 @app.route('/catalog/categories/<category_slug>/items/<item_slug>/edit',
            methods=['GET', 'POST'])
 def editItem(category_slug, item_slug):
+    '''Update an item - user must be logged in'''
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(
@@ -329,6 +346,7 @@ def editItem(category_slug, item_slug):
 @app.route('/catalog/categories/<category_slug>/items/<item_slug>/delete',
            methods=['GET', 'POST'])
 def deleteItem(category_slug, item_slug):
+    '''Delete an item - user must be logged in'''
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(

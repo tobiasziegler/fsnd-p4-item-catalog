@@ -95,6 +95,7 @@ def gconnect():
         return response
 
     # Store the access token in the session for later use.
+    login_session['provider'] = 'google'
     login_session['access_token'] = credentials.access_token
     login_session['google_id'] = google_id
 
@@ -152,15 +153,26 @@ def getUserID(email):
         return None
 
 
+@app.route('/logout')
+def showLogout():
+    if 'provider' in login_session:
+        if login_session['provider'] == 'google':
+            isDisconnected = gdisconnect()
+            if isDisconnected:
+                del login_session['username']
+                del login_session['email']
+                del login_session['picture']
+                flash('You have been logged out.')
+    return redirect(url_for('showCatalog'))
+
+
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
-        response = make_response(json.dumps('Current user not connected.'),
-                                 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash("Unable to logout - you weren't logged in!")
+        return False
     print('In gdisconnect access token is %s' % access_token)
     print('User name is: ')
     print(login_session['username'])
@@ -173,18 +185,10 @@ def gdisconnect():
     if result['status'] == '200':
         del login_session['access_token']
         del login_session['google_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        return True
     else:
-        response = make_response(json.dumps(
-                                 'Failed to revoke token for given user.',
-                                 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('Unable to logout - Failed to revoke your Google access token.')
+        return False
 
 
 @app.route('/')

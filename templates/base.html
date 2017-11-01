@@ -16,6 +16,17 @@
         <a href="{{ url_for('showLogin') }}">Login</a>
         {% endif %}
     </header>
+    <div class="flash">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li><strong>{{ message }}</strong></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
     <main id="page-content">{% block content %}{% endblock %}</main>
 </body>
 </html>

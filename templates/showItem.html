@@ -3,4 +3,8 @@
 {% block content %}
 <h2>{{ item.name }}</h2>
 <p>Description: {{ item.description }}</p>
+{% if 'username' in session %}
+<a href="{{ url_for('editItem', category_slug=item.category.slug, item_slug=item.slug) }}">Edit</a>
+<a href="{{ url_for('deleteItem', category_slug=item.category.slug, item_slug=item.slug) }}">Delete</a>
+{% endif %}
 {% endblock %}

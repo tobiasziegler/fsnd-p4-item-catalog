@@ -3,11 +3,18 @@
 {% block content %}
 <div>
     <h2>Categories</h2>
+    {% if 'username' in session %}
+    <a href="{{ url_for('newCategory') }}">New Category</a>
+    {% endif %}
     {% if categories %}
     <ul>
         {% for c in categories %}
         <li>
             <a href="{{ url_for('showCategory', category_slug=c.slug) }}">{{ c.name }}</a>
+            {% if 'username' in session %}
+            <a href="{{ url_for('editCategory', category_slug=c.slug) }}">Edit</a>
+            <a href="{{ url_for('deleteCategory', category_slug=c.slug) }}">Delete</a>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>
@@ -22,6 +29,10 @@
         {% for i in items %}
         <li>
             <a href="{{ url_for('showItem', category_slug=i.category.slug, item_slug=i.slug) }}">{{ i.name }}</a> ({{ i.category.name }})
+            {% if 'username' in session %}
+            <a href="{{ url_for('editItem', category_slug=i.category.slug, item_slug=i.slug) }}">Edit</a>
+            <a href="{{ url_for('deleteItem', category_slug=i.category.slug, item_slug=i.slug) }}">Delete</a>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>

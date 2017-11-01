@@ -6,4 +6,5 @@
     <label for="name">Are you sure you want to delete {{ item.name }}?</label>
     <button type="submit">Confirm</button>
 </form>
+<a href="{{ url_for('showItem', category_slug=category.slug, item_slug=item.slug) }}">Cancel</a>
 {% endblock %}

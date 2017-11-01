@@ -9,4 +9,5 @@
     <textarea name="description">{{ item.description }}</textarea>
     <button type="submit">Update</button>
 </form>
+<a href="{{ url_for('showItem', category_slug=category.slug, item_slug=item.slug) }}">Cancel</a>
 {% endblock %}

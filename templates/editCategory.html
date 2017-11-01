@@ -7,4 +7,5 @@
     <input type="text" maxlength="256" name="name" value="{{ category.name }}">
     <button type="submit">Update</button>
 </form>
+<a href="{{ url_for('showCategory', category_slug=category.slug) }}">Cancel</a>
 {% endblock %}

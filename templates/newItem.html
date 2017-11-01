@@ -9,4 +9,5 @@
     <textarea name="description"></textarea>
     <button type="submit">Create</button>
 </form>
+<a href="{{ url_for('showCategory', category_slug=category.slug) }}">Cancel</a>
 {% endblock %}

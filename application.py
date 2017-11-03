@@ -2,6 +2,7 @@ from models import Base, User, Category, Item
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy import create_engine, desc, asc
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import jsonify
@@ -233,9 +234,13 @@ def newCategory():
         newCategory = Category(name=name,
                                slug=slug,
                                user_id=login_session['user_id'])
-        session.add(newCategory)
-        flash('New Category %s Successfully Created' % newCategory.name)
-        session.commit()
+        try:
+            session.add(newCategory)
+            session.commit()
+            flash('New Category %s Successfully Created' % newCategory.name)
+        except IntegrityError:
+            session.rollback()
+            flash('New category failed - a category with the same link exists.')
         return redirect(url_for('showCatalog'))
     else:
         return render_template('newCategory.html')
@@ -258,9 +263,14 @@ def editCategory(category_slug):
             slug = slugify(name)
             editedCategory.name = name
             editedCategory.slug = slug
-            session.add(editedCategory)
-            session.commit()
-            flash('Category %s Successfully Edited' % editedCategory.name)
+            try:
+                session.add(editedCategory)
+                session.commit()
+                flash('Category %s Successfully Edited' % editedCategory.name)
+            except IntegrityError:
+                session.rollback()
+                flash('Edit category failed - a category with the same link '
+                      'exists.')
             return redirect(url_for('showCatalog'))
     else:
         return render_template('editCategory.html', category=editedCategory)
@@ -315,9 +325,13 @@ def newItem(category_slug):
                        description=description,
                        user_id=login_session['user_id'],
                        category_id=category.id)
-        session.add(newItem)
-        flash('New Item %s Successfully Created' % newItem.name)
-        session.commit()
+        try:
+            session.add(newItem)
+            session.commit()
+            flash('New Item %s Successfully Created' % newItem.name)
+        except IntegrityError:
+            session.rollback()
+            flash('New item failed - an item with the same link exists.')
         return redirect(url_for('showCategory', category_slug=category_slug))
     else:
         return render_template('newItem.html', category=category)
@@ -344,9 +358,14 @@ def editItem(category_slug, item_slug):
             editedItem.name = name
             editedItem.slug = slug
             editedItem.description = description
-            session.add(editedItem)
-            session.commit()
-            flash('Item %s Successfully Edited' % editedItem.name)
+            try:
+                session.add(editedItem)
+                session.commit()
+                flash('Item %s Successfully Edited' % editedItem.name)
+            except:
+                session.rollback()
+                flash('Edit item failed - an item with the same link '
+                      'exists.')
             return redirect(url_for('showCategory',
                                     category_slug=category_slug))
     else:

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Edit Item - Item Catalog App{% endblock %}
 {% block content %}
+<div class="form-panel">
 <h2>Edit Item</h2>
 <form action="{{ url_for('editItem', category_slug=category.slug, item_slug=item.slug) }}" method="post">
     <label for="name">Name:</label>
@@ -10,4 +11,5 @@
     <button type="submit">Update</button>
 </form>
 <a href="{{ url_for('showItem', category_slug=category.slug, item_slug=item.slug) }}">Cancel</a>
+</div>
 {% endblock %}

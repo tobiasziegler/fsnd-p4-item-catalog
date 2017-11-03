@@ -23,6 +23,11 @@
     text-align: center;
 }
 
+.form-panel {
+    max-width: 480px;
+    margin: 16px auto;
+}
+
 h1,
 h2 {
     text-transform: uppercase;
@@ -38,6 +43,19 @@ a {
 ul {
     list-style-type: none;
     padding-left: 0;
+}
+
+label,
+input,
+textarea,
+button {
+    display: block;
+}
+
+textarea {
+    height:400px;
+    width:280px;
+    margin: 8px auto;
 }
 
 .admin-link > a {

@@ -38,3 +38,14 @@ Google Developer Console as follows:
 1. Run the app using `python3 application.py`.
 
 1. Load the app locally at `http://localhost:5000`.
+
+## API endpoints
+
+There are three API calls available to retrieve data in JSON format:
+
+1. `/api/categories` returns a list of all categories
+
+1. `/api/categories/<category_slug>` returns all items in the specified category
+
+1. `/api/categories/<category_slug>/items/<item_slug>` returns the specified
+item

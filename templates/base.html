@@ -10,25 +10,38 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <header id="page-header">
-        <h1><a href="{{ url_for('showCatalog') }}">Catalog App</a></h1>
-        {% if 'username' in session %}
-        <a href="{{ url_for('showLogout') }}">Logout</a>
-        {% else %}
-        <a href="{{ url_for('showLogin') }}">Login</a>
-        {% endif %}
-    </header>
-    <div class="flash">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li><strong>{{ message }}</strong></li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
+    <div id="container">
+        <header id="page-header" class="grid grid-full grid-small-fit">
+            <h1 id="page-title" class="grid-cell"><a href="{{ url_for('showCatalog') }}">Catalog App</a></h1>
+            <div id="login-logout" class="grid-cell">
+                {% if 'username' in session %}
+                <a href="{{ url_for('showLogout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('showLogin') }}">Login</a>
+                {% endif %}
+            </div>
+        </header>
+        <div id="flash">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li><strong>{{ message }}</strong></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <main id="page-content" class="grid grid-full grid-small-fit">{% block content %}{% endblock %}</main>
     </div>
-    <main id="page-content">{% block content %}{% endblock %}</main>
+    <!-- Load fonts using the Web Font Loader -->
+	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+	<script>
+	WebFont.load({
+		google: {
+			families: ['Muli:200,400']
+		}
+	});
+	</script>
 </body>
 </html>

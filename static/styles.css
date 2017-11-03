@@ -1,0 +1,132 @@
+/* Set the box model and default text properties */
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #2d3c49;
+    font-family: "Muli", sans-serif;
+}
+
+#container {
+    margin: 16px;
+    max-width: 960px;
+}
+
+#page-header {
+    padding-bottom: 8px;
+    border-bottom: 4px solid #7d97ad;
+    margin-bottom: 16px;
+}
+
+#flash {
+    text-align: center;
+}
+
+h1,
+h2 {
+    text-transform: uppercase;
+}
+
+a {
+    color: #1199c3;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.admin-link > a {
+    color: #7d97ad;
+    padding-left: 16px;
+}
+
+.item-name > .category-name {
+    font-style: italic;
+}
+
+/**
+* Grid layout
+*
+* Approach to grid layout is based on "Better, Simpler Grid Systems"
+* by Philip Walton at Solved by Flexbox:
+* https://philipwalton.github.io/solved-by-flexbox/demos/grids/
+*/
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.grid-cell {
+    flex: 1;
+}
+
+.grid-gutters {
+    margin: -1em 0 0 -1em;
+}
+
+.grid-gutters > .grid-cell {
+    padding: 1em 0 0 1em;
+}
+
+.grid-fit > .grid-cell {
+    flex: 1;
+}
+
+.grid-full > .grid-cell {
+    flex: 0 0 100%;
+}
+
+.grid-1of2 > .grid-cell {
+    flex: 0 0 50%;
+}
+
+.grid-1of3 > .grid-cell {
+    flex: 0 0 33.3333%;
+}
+
+.grid-1of4 > .grid-cell {
+    flex: 0 0 25%;
+}
+
+/**
+* Media queries, including responsive grid layout classes
+*/
+
+@media screen and (min-width: 30em) {
+    #login-logout {
+        margin: 2em 0;
+        text-align: right;
+    }
+
+    .grid-small-fit > .grid-cell {
+        flex: 1;
+    }
+
+    .grid-small-full > .grid-cell {
+        flex: 0 0 100%;
+    }
+
+    .grid-small-1of2 > .grid-cell {
+        flex: 0 0 50%;
+    }
+
+    .grid-small-1of3 > .grid-cell {
+        flex: 0 0 33.3333%;
+    }
+
+    .grid-small-1of4 > .grid-cell {
+        flex: 0 0 25%;
+    }
+}
+
+@media screen and (min-width: 62em) {
+    #container {
+        margin: 16px auto;
+    }
+}

@@ -2,9 +2,9 @@
 {% block title %}{{ item.name }} - {{ category.name }} - Item Catalog App{% endblock %}
 {% block content %}
 <h2>{{ item.name }}</h2>
-<p>Description: {{ item.description }}</p>
+<p><strong>Description:</strong> {{ item.description }}</p>
 {% if 'username' in session %}
-<a href="{{ url_for('editItem', category_slug=item.category.slug, item_slug=item.slug) }}">Edit</a>
-<a href="{{ url_for('deleteItem', category_slug=item.category.slug, item_slug=item.slug) }}">Delete</a>
+<span class="admin-link item-edit"><a href="{{ url_for('editItem', category_slug=item.category.slug, item_slug=item.slug) }}">Edit</a></span>
+<span class="admin-link item-delete"><a href="{{ url_for('deleteItem', category_slug=item.category.slug, item_slug=item.slug) }}">Delete</a></span>
 {% endif %}
 {% endblock %}

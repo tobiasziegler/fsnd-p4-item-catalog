@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Item Catalog App{% endblock %}
 {% block content %}
-<div>
+<div class="grid-cell">
     <h2>Categories</h2>
     {% if 'username' in session %}
-    <a href="{{ url_for('newCategory') }}">New Category</a>
+    <span class="admin-link category-new"><a href="{{ url_for('newCategory') }}">New Category</a></span>
     {% endif %}
     {% if categories %}
     <ul>
         {% for c in categories %}
         <li>
-            <a href="{{ url_for('showCategory', category_slug=c.slug) }}">{{ c.name }}</a>
+            <span class="category-name"><a href="{{ url_for('showCategory', category_slug=c.slug) }}">{{ c.name }}</a></span>
             {% if 'username' in session %}
-            <a href="{{ url_for('editCategory', category_slug=c.slug) }}">Edit</a>
-            <a href="{{ url_for('deleteCategory', category_slug=c.slug) }}">Delete</a>
+            <span class="admin-link category-edit"><a href="{{ url_for('editCategory', category_slug=c.slug) }}">Edit</a></span>
+            <span class="admin-link category-delete"><a href="{{ url_for('deleteCategory', category_slug=c.slug) }}">Delete</a></span>
             {% endif %}
         </li>
         {% endfor %}
@@ -22,16 +22,16 @@
     <p>There are no categories available</p>
     {% endif %}
 </div>
-<div>
+<div class="grid-cell">
     <h2>Latest Items</h2>
     {% if items %}
     <ul>
         {% for i in items %}
         <li>
-            <a href="{{ url_for('showItem', category_slug=i.category.slug, item_slug=i.slug) }}">{{ i.name }}</a> ({{ i.category.name }})
+            <span class="item-name"><a href="{{ url_for('showItem', category_slug=i.category.slug, item_slug=i.slug) }}">{{ i.name }}</a> <span class="category-name">({{ i.category.name }})</span></span>
             {% if 'username' in session %}
-            <a href="{{ url_for('editItem', category_slug=i.category.slug, item_slug=i.slug) }}">Edit</a>
-            <a href="{{ url_for('deleteItem', category_slug=i.category.slug, item_slug=i.slug) }}">Delete</a>
+            <span class="admin-link item-edit"><a href="{{ url_for('editItem', category_slug=i.category.slug, item_slug=i.slug) }}">Edit</a></span>
+            <span class="admin-link item-delete"><a href="{{ url_for('deleteItem', category_slug=i.category.slug, item_slug=i.slug) }}">Delete</a></span>
             {% endif %}
         </li>
         {% endfor %}

@@ -10,9 +10,10 @@
 {% endblock %}
 {% block title %}Login - Item Catalog App{% endblock %}
 {% block content %}
+<div class="form-panel">
 <h2>Login</h2>
 
-<p>Once logged in to your account, you can create, edit and delete categorie and items</p>
+<p>Once logged in to your account, you can create, edit and delete categories and items</p>
 
 <!-- GOOGLE SIGN IN BUTTON -->
 <div id="signinButton">
@@ -27,7 +28,7 @@
     </span>
 </div>
 <div id="result"></div>
-
+</div>
 <script>
 function signInCallback(authResult) {
     if (authResult['code']) {

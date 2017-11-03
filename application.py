@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import create_engine, desc, asc
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import jsonify
 from flask import session as login_session
 import random
 import string
@@ -361,6 +362,27 @@ def deleteItem(category_slug, item_slug):
     else:
         return render_template('deleteItem.html', category=category,
                                item=itemToDelete)
+
+
+# JSON APIs to view Category and Item information
+
+@app.route('/api/categories')
+def showCategoriesJSON():
+    categories = session.query(Category).all()
+    return jsonify(Categories=[c.serialize for c in categories])
+
+
+@app.route('/api/categories/<category_slug>')
+def showItemsJSON(category_slug):
+    category = session.query(Category).filter_by(slug=category_slug).first()
+    items = session.query(Item).filter_by(category_id=category.id).all()
+    return jsonify(Items=[i.serialize for i in items])
+
+
+@app.route('/api/categories/<category_slug>/items/<item_slug>')
+def showItemJSON(category_slug, item_slug):
+    item = session.query(Item).filter_by(slug=item_slug).first()
+    return jsonify(Item=item.serialize)
 
 
 if __name__ == "__main__":

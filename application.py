@@ -243,11 +243,14 @@ def newCategory():
 @app.route('/catalog/categories/<category_slug>/edit',
            methods=['GET', 'POST'])
 def editCategory(category_slug):
-    '''Edit a category - user must be logged in'''
+    '''Edit a category - user must be logged in as the category creator'''
     if 'username' not in login_session:
         return redirect('/login')
     editedCategory = session.query(Category).filter_by(
                         slug=category_slug).first()
+    if editedCategory.user_id != login_session['user_id']:
+        flash('You are not authorised to edit a category you didn\'t create')
+        return redirect(url_for('showCategory', category_slug=category_slug))
     if request.method == 'POST':
         if request.form['name']:
             name = request.form['name']
@@ -265,11 +268,14 @@ def editCategory(category_slug):
 @app.route('/catalog/categories/<category_slug>/delete',
            methods=['GET', 'POST'])
 def deleteCategory(category_slug):
-    '''Update a category - user must be logged in'''
+    '''Update a category - user must be logged in as the category creator'''
     if 'username' not in login_session:
         return redirect('/login')
     categoryToDelete = session.query(Category).filter_by(
                        slug=category_slug).one()
+    if categoryToDelete.user_id != login_session['user_id']:
+        flash('You are not authorised to delete a category you didn\'t create')
+        return redirect(url_for('showCategory', category_slug=category_slug))
     if request.method == 'POST':
         itemsToDelete = session.query(Item).filter_by(
                         category=categoryToDelete).all()
@@ -319,13 +325,16 @@ def newItem(category_slug):
 @app.route('/catalog/categories/<category_slug>/items/<item_slug>/edit',
            methods=['GET', 'POST'])
 def editItem(category_slug, item_slug):
-    '''Update an item - user must be logged in'''
+    '''Update an item - user must be logged in as the item creator'''
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(
                    slug=category_slug).first()
     editedItem = session.query(Item).filter_by(
                      slug=item_slug).first()
+    if editedItem.user_id != login_session['user_id']:
+        flash('You are not authorised to edit an item you didn\'t create')
+        return redirect(url_for('showCategory', category_slug=category_slug))
     if request.method == 'POST':
         if request.form['name']:
             name = request.form['name']
@@ -347,13 +356,16 @@ def editItem(category_slug, item_slug):
 @app.route('/catalog/categories/<category_slug>/items/<item_slug>/delete',
            methods=['GET', 'POST'])
 def deleteItem(category_slug, item_slug):
-    '''Delete an item - user must be logged in'''
+    '''Delete an item - user must be logged in as the item creator'''
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(
                    slug=category_slug).first()
     itemToDelete = session.query(Item).filter_by(
                        slug=item_slug).one()
+    if itemToDelete.user_id != login_session['user_id']:
+        flash('You are not authorised to delete an item you didn\'t create')
+        return redirect(url_for('showCategory', category_slug=category_slug))
     if request.method == 'POST':
         session.delete(itemToDelete)
         flash('Item %s Successfully Deleted' % itemToDelete.name)

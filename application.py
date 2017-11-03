@@ -27,11 +27,12 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 
 # Create a state token to prevent request forgery.
 # Store it in the session for later validation.
-@app.route('/login/')
+@app.route('/login')
 def showLogin():
     '''Initiate the login process'''
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -40,7 +41,7 @@ def showLogin():
     return render_template('login.html', STATE=state)
 
 
-@app.route('/gconnect/', methods=['POST'])
+@app.route('/gconnect', methods=['POST'])
 def gconnect():
     '''Exchange credentials and establish user login via Google'''
     # Validate state token
@@ -161,7 +162,7 @@ def getUserID(email):
         return None
 
 
-@app.route('/logout/')
+@app.route('/logout')
 def showLogout():
     '''Handle the user logout process through the appropriate provider'''
     if 'provider' in login_session:
@@ -175,7 +176,7 @@ def showLogout():
     return redirect(url_for('showCatalog'))
 
 
-@app.route('/gdisconnect/')
+@app.route('/gdisconnect')
 def gdisconnect():
     '''Revoke the user's Google access credentials'''
     access_token = login_session.get('access_token')
@@ -202,7 +203,7 @@ def gdisconnect():
 
 
 @app.route('/')
-@app.route('/catalog/')
+@app.route('/catalog')
 def showCatalog():
     '''Display the main catalog page'''
     categories = session.query(Category).all()
@@ -210,7 +211,7 @@ def showCatalog():
     return render_template('catalog.html', categories=categories, items=items)
 
 
-@app.route('/catalog/categories/<category_slug>/')
+@app.route('/catalog/categories/<category_slug>')
 def showCategory(category_slug):
     '''Display the page for a specific category'''
     categories = session.query(Category).all()
@@ -220,7 +221,7 @@ def showCategory(category_slug):
                            category=category, items=items)
 
 
-@app.route('/catalog/categories/new/',
+@app.route('/catalog/categories/new',
            methods=['GET', 'POST'])
 def newCategory():
     '''Create a new category - user must be logged in'''
@@ -240,7 +241,7 @@ def newCategory():
         return render_template('newCategory.html')
 
 
-@app.route('/catalog/categories/<category_slug>/edit/',
+@app.route('/catalog/categories/<category_slug>/edit',
            methods=['GET', 'POST'])
 def editCategory(category_slug):
     '''Edit a category - user must be logged in as the category creator'''
@@ -265,7 +266,7 @@ def editCategory(category_slug):
         return render_template('editCategory.html', category=editedCategory)
 
 
-@app.route('/catalog/categories/<category_slug>/delete/',
+@app.route('/catalog/categories/<category_slug>/delete',
            methods=['GET', 'POST'])
 def deleteCategory(category_slug):
     '''Update a category - user must be logged in as the category creator'''
@@ -290,7 +291,7 @@ def deleteCategory(category_slug):
                                category=categoryToDelete)
 
 
-@app.route('/catalog/categories/<category_slug>/items/<item_slug>/')
+@app.route('/catalog/categories/<category_slug>/items/<item_slug>')
 def showItem(category_slug, item_slug):
     '''Display te page for a specific item'''
     category = session.query(Category).filter_by(slug=category_slug).first()
@@ -298,7 +299,7 @@ def showItem(category_slug, item_slug):
     return render_template('showItem.html', category=category, item=item)
 
 
-@app.route('/catalog/categories/<category_slug>/items/new/',
+@app.route('/catalog/categories/<category_slug>/items/new',
            methods=['GET', 'POST'])
 def newItem(category_slug):
     '''Create a new item in a specified category - user must be logged in'''
@@ -322,7 +323,7 @@ def newItem(category_slug):
         return render_template('newItem.html', category=category)
 
 
-@app.route('/catalog/categories/<category_slug>/items/<item_slug>/edit/',
+@app.route('/catalog/categories/<category_slug>/items/<item_slug>/edit',
            methods=['GET', 'POST'])
 def editItem(category_slug, item_slug):
     '''Update an item - user must be logged in as the item creator'''
@@ -353,7 +354,7 @@ def editItem(category_slug, item_slug):
                                item=editedItem)
 
 
-@app.route('/catalog/categories/<category_slug>/items/<item_slug>/delete/',
+@app.route('/catalog/categories/<category_slug>/items/<item_slug>/delete',
            methods=['GET', 'POST'])
 def deleteItem(category_slug, item_slug):
     '''Delete an item - user must be logged in as the item creator'''
@@ -378,20 +379,20 @@ def deleteItem(category_slug, item_slug):
 
 # JSON APIs to view Category and Item information
 
-@app.route('/api/categories/')
+@app.route('/api/categories')
 def showCategoriesJSON():
     categories = session.query(Category).all()
     return jsonify(Categories=[c.serialize for c in categories])
 
 
-@app.route('/api/categories/<category_slug>/')
+@app.route('/api/categories/<category_slug>')
 def showItemsJSON(category_slug):
     category = session.query(Category).filter_by(slug=category_slug).first()
     items = session.query(Item).filter_by(category_id=category.id).all()
     return jsonify(Items=[i.serialize for i in items])
 
 
-@app.route('/api/categories/<category_slug>/items/<item_slug>/')
+@app.route('/api/categories/<category_slug>/items/<item_slug>')
 def showItemJSON(category_slug, item_slug):
     item = session.query(Item).filter_by(slug=item_slug).first()
     return jsonify(Item=item.serialize)
